@@ -6,31 +6,12 @@ import {
   updateUserPreferences,
 } from "../../../lib/preferences";
 import { extractPreferencesWithAI } from "../../../lib/ai";
-import { getMessages, setMessages } from "../../../lib/messages";
+import { storeMessageForUser, setMessages } from "../../../lib/messages";
 import { getUserId } from "@/lib/user";
 import { getSystemPrompt } from "@/lib/prompts";
+import { MAX_MESSAGE_LENGTH } from "@/constants";
 
 export const runtime = "edge";
-
-const storeMessageForUser = async ({
-  userId,
-  message,
-  role,
-}: {
-  userId: string;
-  message: string;
-  role: "user" | "assistant";
-}) => {
-  const messages = await getMessages(userId);
-
-  messages.push({ role, content: message });
-
-  await setMessages(userId, messages);
-
-  return messages;
-};
-
-const MAX_MESSAGE_LENGTH = 1000;
 
 export async function POST(req: Request) {
   // Check the rate limit
