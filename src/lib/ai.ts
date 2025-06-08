@@ -3,21 +3,38 @@ import { createOpenAI } from "@ai-sdk/openai";
 import { PreferenceExtractionSchema } from "./preferences";
 import { Message } from "./messages";
 
-export async function extractPreferencesWithAI(messages: Message[]) {
+export async function extractPreferencesWithAI(
+  messages: Message[],
+  initialUserPreferences: {
+    favoriteCountry: string | null;
+    favoriteContinent: string | null;
+    favoriteDestination: string | null;
+  }
+) {
+  const alreadySetPreferences = Object.entries(initialUserPreferences).filter(
+    ([_, value]) => value !== null
+  );
+
   const extractionPrompt = `
+${
+  alreadySetPreferences.length > 0
+    ? `
+  The user has already set the following preferences:
+  ${alreadySetPreferences.map(([key, value]) => `${key}: ${value}`).join("\n")}
+`
+    : ""
+}
+
 You are an assistant that extracts user preferences from conversation messages.
 
 Analyze the conversation history and determine if the user is updating their geographic preferences in their latest message.
 
 The preferences you should extract are:
 - favoriteCountry: Any country name mentioned as preferred
-- favoriteContinent: Must be one of the allowed continents: Africa, Antarctica, Asia, Europe, North America, South America, Australia
+- favoriteContinent: Any continent name
 - favoriteDestination: Any destination (city, landmark, region) mentioned as preferred
 
-If the user is just asking questions about geography without expressing personal preferences, set isUpdatingUserPreferences to false.
-
-If the user provides an invalid value (e.g., a continent for country), set invalidField and invalidReason. 
-**If a value is invalid, the invalidReason should always include the list of allowed values for that field.**
+If the user is just asking questions about geography without expressing personal preferences, set isUpdatingUserPreferences to false. 
 
 Look at the full conversation context to understand the user's intent.
 If one of the fields is invalid, set invalidField and invalidReason. Provide detailed reasoning for your answer, based on schema validation.

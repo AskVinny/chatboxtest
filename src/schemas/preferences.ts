@@ -1,4 +1,3 @@
-import { CONTINENTS } from "../lib/preferences";
 import { z } from "zod";
 
 export const preferencesSchema = z.object({
@@ -10,12 +9,14 @@ export const preferencesSchema = z.object({
       /^[a-zA-Z\s-]+$/,
       "Country name can only contain letters, spaces, and hyphens"
     ),
-  favoriteContinent: z.enum(CONTINENTS, {
-    errorMap: () => ({
-      message:
-        "Please select a valid continent: Africa, Antarctica, Asia, Europe, North America, South America, Australia",
-    }),
-  }),
+  favoriteContinent: z
+    .string()
+    .min(2, "Continent name must be at least 2 characters")
+    .max(50, "Continent name must be less than 50 characters")
+    .regex(
+      /^[a-zA-Z\s-]+$/,
+      "Continent name can only contain letters, spaces, and hyphens"
+    ),
   favoriteDestination: z
     .string()
     .min(2, "Destination name must be at least 2 characters")

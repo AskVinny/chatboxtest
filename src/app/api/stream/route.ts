@@ -22,6 +22,8 @@ export async function POST(req: Request) {
   // Extract the message from the request
   const { message } = await req.json();
 
+  console.log("Message", message);
+
   const messageLength = message.length;
 
   if (messageLength > MAX_MESSAGE_LENGTH) {
@@ -39,10 +41,30 @@ export async function POST(req: Request) {
     role: "user",
   });
 
+  const initialUserPreferences = await getPreferences(userId);
+
   // Extract preferences and validation from the conversation
-  const extraction = await extractPreferencesWithAI(messages);
+  const extraction = await extractPreferencesWithAI(messages, {
+    favoriteCountry: initialUserPreferences.favoriteCountry || null,
+    favoriteContinent: initialUserPreferences.favoriteContinent || null,
+    favoriteDestination: initialUserPreferences.favoriteDestination || null,
+  });
 
   console.log("Extraction result", extraction);
+
+  if (extraction.invalidField) {
+    const invalidFieldMsg = `Invalid field: ${extraction.invalidField}. Reason: ${extraction.invalidReason}`;
+    messages = await storeMessageForUser({
+      userId,
+      message: invalidFieldMsg,
+      role: "assistant",
+    });
+
+    return new Response(invalidFieldMsg, {
+      status: 200,
+      headers: { "Content-Type": "text/plain" },
+    });
+  }
 
   if (extraction.isUpdatingUserPreferences) {
     await updateUserPreferences(userId, extraction);
@@ -103,20 +125,6 @@ export async function POST(req: Request) {
       role: "assistant",
     });
     return new Response(updateMsg, {
-      status: 200,
-      headers: { "Content-Type": "text/plain" },
-    });
-  }
-
-  if (extraction.invalidField) {
-    const invalidFieldMsg = `Invalid field: ${extraction.invalidField}. Reason: ${extraction.invalidReason}`;
-    messages = await storeMessageForUser({
-      userId,
-      message: invalidFieldMsg,
-      role: "assistant",
-    });
-
-    return new Response(invalidFieldMsg, {
       status: 200,
       headers: { "Content-Type": "text/plain" },
     });

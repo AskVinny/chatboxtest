@@ -143,7 +143,7 @@ export default function Home() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && !preferencesMissing && send()}
+          onKeyDown={(e) => e.key === "Enter" && send()}
           maxLength={MAX_MESSAGE_LENGTH}
           className="flex-1 rounded-md border px-3 py-2 text-sm bg-transparent outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600"
           placeholder={

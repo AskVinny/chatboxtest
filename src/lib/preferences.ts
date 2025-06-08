@@ -1,23 +1,13 @@
 import cache from "../cache";
 import { z } from "zod";
 
-export const CONTINENTS = [
-  "Africa",
-  "Antarctica",
-  "Asia",
-  "Europe",
-  "North America",
-  "South America",
-  "Australia",
-] as const;
-
 export const PreferenceExtractionSchema = z.object({
   isUpdatingUserPreferences: z.boolean(),
   favoriteCountry: z.string().nullable(),
-  favoriteContinent: z.enum(CONTINENTS).nullable(),
+  favoriteContinent: z.string().nullable(),
   favoriteDestination: z.string().nullable(),
   invalidField: z.string().nullable(), // e.g. "favoriteCountry" if invalid
-  invalidReason: z.string().nullable(), // e.g. "Invalid Continent name 'Oceania'". Valid continents are: ${CONTINENTS.join(", ")}
+  invalidReason: z.string().nullable(), // e.g. "Invalid Continent name 'Oceania'"
 });
 
 export async function getPreferences(userId: string) {
