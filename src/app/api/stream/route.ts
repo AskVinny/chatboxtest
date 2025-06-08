@@ -44,8 +44,6 @@ export async function POST(req: Request) {
 
   console.log("Extraction result", extraction);
 
-  console.log("Extraction result", extraction);
-
   if (extraction.isUpdatingUserPreferences) {
     await updateUserPreferences(userId, extraction);
   }
