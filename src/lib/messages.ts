@@ -22,3 +22,21 @@ export async function getMessages(userId: string): Promise<Message[]> {
   export async function setMessages(userId: string, messages: Message[]) {
     await cache.set(`messages:${userId}`, JSON.stringify(messages));
   }
+
+  export const storeMessageForUser = async ({
+    userId,
+    message,
+    role,
+  }: {
+    userId: string;
+    message: string;
+    role: "user" | "assistant";
+  }) => {
+    const messages = await getMessages(userId);
+  
+    messages.push({ role, content: message });
+  
+    await setMessages(userId, messages);
+  
+    return messages;
+  };
