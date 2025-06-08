@@ -1,5 +1,73 @@
+# Geography Chatbot
 
-# Coding Assessment: Chatbox Enhancement
+A Next.js application that provides an interactive geography chatbot experience.
+
+## Setup
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd chatboxtest
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+```
+
+3. Set up environment variables:
+```bash
+# Copy the example environment file
+cp .env.local.example .env.local
+
+# Edit .env.local with your values
+```
+
+Required environment variables:
+```
+# OpenAI API Key
+OPENAI_KEY=your_openai_api_key
+OPENA_AI_PROJECT_ID=your_open_ai_project_id
+
+# Vercel KV (for rate limiting and cache in vercel edge env)
+KV_REST_API_URL=http://localhost:8079
+KV_REST_API_TOKEN=example_token
+```
+
+## Development
+
+1. Start the application:
+```bash
+make up
+```
+This will start both the Redis container and the Next.js development server.
+
+The app will be available at [http://localhost:3000](http://localhost:3000)
+
+## Shutting Down
+
+To stop the application:
+```bash
+make down
+```
+This will stop both the Redis container and the Next.js development server.
+
+## Features
+
+- Interactive geography chatbot
+- Rate limiting with Vercel KV
+- Docker support for local development
+- Edge Runtime compatibility
+
+## Tech Stack
+
+- Next.js
+- OpenAI API
+- Vercel KV
+- Docker
+- TypeScript
 
 ## 🎯 Your Task
 
@@ -30,26 +98,6 @@ Your mission is to transform this chatbot into an extraordinary conversational a
 - Fixed bottom-right chatbox component
 - `/api/stream` **Edge** route that streams an echo response ⚡️
 - Stub for integrating an **OpenAI Assistant** to add side-effects (analytics, logging, etc.)
-
-## 🚀 How to Get Started
-
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:AskVinny/chatboxtest.git
-   cd chatboxtest
-   ```
-
-2. Ensure the correct Node version:
-   ```bash
-   nvm install 22.15.0
-   nvm use
-   ```
-
-3. Install dependencies and run the development server:
-   ```bash
-   npm install
-   npm run dev
-   ```
 
 ## 🧑‍💻 Best Practice Guidance
 
