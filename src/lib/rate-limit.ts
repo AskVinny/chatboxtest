@@ -1,6 +1,6 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
-import { headers } from 'next/headers';
+import { headers } from "next/headers";
 
 export const MAX_REQUESTS = 10; // 10 requests per minute
 
@@ -12,17 +12,15 @@ const ratelimit = new Ratelimit({
   prefix: "ratelimit",
 });
 
-export async function checkRateLimit(): Promise<{ 
-  success: boolean; 
+export async function checkRateLimit(): Promise<{
+  success: boolean;
   response?: Response;
   remaining?: number;
   reset?: number;
 }> {
   const headersList = await headers();
   const ip = getClientIp(headersList);
-  
-  console.log("IP:", ip);
-  
+
   const { success, limit, reset, remaining } = await ratelimit.limit(ip);
 
   if (!success) {
@@ -43,39 +41,39 @@ export async function checkRateLimit(): Promise<{
             "X-RateLimit-Reset": reset.toString(),
           },
         }
-      )
+      ),
     };
   }
 
   return {
     success: true,
     remaining,
-    reset
+    reset,
   };
 }
 
 function getClientIp(headersList: Headers): string {
   // Common headers for client IP, in order of preference
   const ipHeaders = [
-    'x-forwarded-for',      // Most common, contains comma-separated list of IPs
-    'x-real-ip',           // Direct client IP
-    'cf-connecting-ip',    // Cloudflare
-    'true-client-ip',      // Akamai and Cloudflare
-    'x-forwarded',         // Alternative format
-    'forwarded-for',       // Alternative format
-    'forwarded'            // Standard Forwarded header
+    "x-forwarded-for", // Most common, contains comma-separated list of IPs
+    "x-real-ip", // Direct client IP
+    "cf-connecting-ip", // Cloudflare
+    "true-client-ip", // Akamai and Cloudflare
+    "x-forwarded", // Alternative format
+    "forwarded-for", // Alternative format
+    "forwarded", // Standard Forwarded header
   ];
 
   for (const header of ipHeaders) {
     const value = headersList.get(header);
     if (value) {
       // For x-forwarded-for, take the first IP (client IP)
-      if (header === 'x-forwarded-for') {
-        return value.split(',')[0].trim();
+      if (header === "x-forwarded-for") {
+        return value.split(",")[0].trim();
       }
       return value;
     }
   }
 
-  return 'unknown';
-} 
+  return "unknown";
+}
